@@ -21,71 +21,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-
-class EmailVerifySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ('verify_token',)
-
-
-class ChangePasswordSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
-    password2 = serializers.CharField(write_only=True, required=True)
-    old_password = serializers.CharField(write_only=True, required=True)
-
-    class Meta:
-        model = CustomUser
-        fields = ('old_password', 'password', 'password2')
-
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-
-        return attrs
-
-    def validate_old_password(self, value):
-        user = self.context['request'].user
-        if not user.check_password(value):
-            raise serializers.ValidationError({"old_password": "Old password is not correct"})
-        return value
-
-    def post(self, instance, validated_data):
-
-        instance.set_password(validated_data['password'])
-        instance.save()
-
-        return instance
-
-
-class ForgotPasswordSerializer(serializers.Serializer):
-    email = serializers.CharField(max_length=255)
-
-    def validate(self, data):
-        email = data.get('email')
-        if email is None:
-            raise serializers.ValidationError(
-                'An email address is required to log in.'
-            )
-        return data
-
-
-class RecoverPasswordSerializer(serializers.Serializer):
-    email = serializers.CharField(max_length=255)
-    verify_token = serializers.CharField(max_length=10)
-
-    def validate(self, data):
-        email = data.get('email')
-        if email is None:
-            raise serializers.ValidationError(
-                'An email address is required to log in.'
-            )
-        return data
- fields = ('email', 'password')
+        fields = ('name', 'email', 'password', 'phone', 'user_type')
         extra_kwargs = {'password': {'write_only': True}}
 
         def create(self, validated_data):
             user = CustomUser.objects.create_user(email=validated_data['email'],
-                                                  password=validated_data['password']
+                                                  password=validated_data['password'],
+                                                  name=validated_data['name'],
+                                                  phone=validated_data['phone'],
+                                                  user_type=validated_data['user_type']
                                                   )
             user.save()
             return user

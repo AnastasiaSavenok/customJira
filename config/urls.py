@@ -16,6 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView
+)
 
 from src.users.views import LogoutAPIView, LoginAPIView, RegisterAPIView
 
@@ -27,5 +32,16 @@ urlpatterns = [
     path('api/v1/login/', LoginAPIView.as_view(), name='logging_in'),
     path('api/v1/register/', RegisterAPIView.as_view(), name="sign_up"),
 
-
+    # Swagger API
+    path('api/v1/docs/download/', SpectacularAPIView.as_view(), name='schema'),
+    path(
+        'api/v1/docs/',
+        SpectacularSwaggerView.as_view(url_name='schema'),
+        name='swagger-ui'
+    ),
+    path(
+        'api/v1/docs/specific/',
+        SpectacularRedocView.as_view(url_name='schema'),
+        name='redoc'
+    ),
 ]
