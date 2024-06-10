@@ -24,7 +24,7 @@ from drf_spectacular.views import (
 from rest_framework.routers import DefaultRouter
 
 from src.tasks.views import TaskViewSet, TakeTaskView, CompleteTaskView, TaskUpdateView
-from src.users.views import LogoutAPIView, LoginAPIView, RegisterAPIView
+from src.users.views import LogoutAPIView, LoginAPIView, RegisterAPIView, CurrentUserView, EmployeeListView
 
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
@@ -36,6 +36,10 @@ urlpatterns = [
     path('api/v1/logout/', LogoutAPIView.as_view(), name='logging_out'),
     path('api/v1/login/', LoginAPIView.as_view(), name='logging_in'),
     path('api/v1/register/', RegisterAPIView.as_view(), name="sign_up"),
+
+    # Users API
+    path('api/v1/current-user/', CurrentUserView.as_view(), name='get_current_user'),
+    path('api/v1/employers/', EmployeeListView.as_view(), name='get_employers'),
 
     # Tasks API
     path('api/v1/', include(router.urls)),
